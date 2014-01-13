@@ -152,8 +152,12 @@ class SSDPServer(DatagramProtocol, log.Loggable):
         """Process a presence announcement.  We just remember the
         details of the SSDP service announced."""
 
-        self.info('Notification from (%s,%d) for %s' % (host, port, headers['nt']))
+        self.info('Notification from (%s,%d) for %s' % (host, port, headers.get('nt', "(none)")))
         self.debug('Notification headers:', headers)
+
+        if 'nt' not in headers:
+            self.info("Got notification without NT, ignoring")
+            return
 
         if headers['nts'] == 'ssdp:alive':
             try:
